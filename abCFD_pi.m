@@ -20,7 +20,7 @@ k = ph.mat.k;
 Cp = ph.mat.Cp;
 thex = ph.mat.thex;
 Tsur = ph.Tsur;
-Tbulk = ph.Tbul;
+Tinit = ph.Tinit;
 Umax = ph.Umax;
 g = ph.g;
 
@@ -28,7 +28,7 @@ nuv = mud / rho;    % Kinematic viscosity   [m^2/s]
 U_mean = 2/3 * Umax;% U mean at inlet due to the velocity profile
 
 %% FROM LITERATURE
-REcritic = 2 * 10^5;
+% REcritic = 2 * 10^5;
 % REdrag = 10;  For RE < 10 the friction drag dominate
 % REpres = 5000;  For RE > 5000  the pressure drag dominate
 
@@ -36,7 +36,7 @@ REcritic = 2 * 10^5;
 % Reynolds number: Internal forces Vs viscous forces
 RE = round( U_mean * L / nuv );
 % Grashof number: Bouyancy Vs viscous forces
-GR = round( ( thex * L^3 * g * (Tsur - Tbulk) ) / nuv^2 );
+GR = round( ( thex * L^3 * g * (Tsur - Tinit) ) / nuv^2 );
 % Prandtl: Hydraulic and thermal property of the fluid
 PR = mud * Cp / k;
 % P?clet: advection effect oveer diffusion of same quantity

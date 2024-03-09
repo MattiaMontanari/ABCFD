@@ -4,50 +4,58 @@
 %  /----\ |  \|    |--  |   |   MODELOBJECT. IT DEALS WITH BOUNDARY CONDITIONS %
 % /      \|__/ \__ |    |__/    OF A GENERAL PHYSICS.                          %
 %                               ALSO BODY FORCES ARE DEFINED                   %
+%   * * * CALLS * * *                                                          %
+%           i. abCFD_SlopeRamp                                                 % 
 %  <>    ><    <>    ><    <>    ><    <>    ><    <>    ><    <>    ><    <>  %
-%[ physics ] = abCFD_BCgeneralPhysics( physics, gDIR, gNEU, gROB, gF, dt )
+%[ phase ] = abCFD_BCgeneralPhysics( phase, dt )
 % INPUTS
-%   See parent function: abCFD_BCtoComsol
+%   - phase : usual structure with phase's info
+%   - dt    : time step taken 
 % OUTPUT
-%   - physics: structure with fields detailing Diriclet, Robin and Neumann 
-%               boundary conditions for any general physics.
+%   - phase : usual structure with phase's info
 
 
-function [ physics ] = abCFD_BCgeneralPhysics( physics, gDIR, gNEU, gROB, gF, dt )
+function [ phase ] = abCFD_BCgeneralPhysics( phase, dt )
+% Initialize
+
+gDIR = phase.DIR.iwrite;
+gNEU = phase.NEU.iwrite;
+gROB = phase.NEU.iwrite;
+gF = phase.Q;
 
 %%  DEFINE BOUNDARY CONDITIONS ----------------------------------------------- %
 
 % DIRICLET BC's
     %  abCFD:   T(x,t) = g(x,t)               COMSOL:  T = T0(x,t)
 %Define g(x,t)
-physics.DIR.iwrite = gDIR ;
+phase.DIR.iwrite = gDIR ;
 %Define starting function
-physics.DIR.start.cutoff = 1;
-physics.DIR.start.t_initial = 0;
-physics.DIR.start.t_final = dt;
-physics.DIR.start.slope = abCFD_SlopeRamp( physics.DIR.start );
+phase.DIR.start.cutoff = 1;
+phase.DIR.start.t_initial = 0;
+phase.DIR.start.t_final = dt;
+phase.DIR.start.slope = abCFD_SlopeRamp( phase.DIR.start );
 
 % ROBIN BC's
     %  abCFD:            pi * dT = h*(g - T)      COMSOL:  k*dT = h*(Text - T)
 %Define g(x,t), k and h
-physics.ROB.iwrite = gROB ;
-physics.ROB.pi     = 1 ;
-physics.ROB.kappa  = 1;
+phase.ROB.iwrite = gROB ;
+phase.ROB.pi     = 1 ;
+phase.ROB.kappa  = 1;
 %Define starting function
-physics.ROB.start.cutoff = 1;
-physics.ROB.start.t_initial = 0;
-physics.ROB.start.t_final = dt;
-physics.ROB.start.slope = abCFD_SlopeRamp( physics.ROB.start );
+phase.ROB.start.cutoff = 1;
+phase.ROB.start.t_initial = 0;
+phase.ROB.start.t_final = dt;
+phase.ROB.start.slope = abCFD_SlopeRamp( phase.ROB.start );
 % NEUMANN BC's 
     %  abCFD:            pi * dT = g(x,t)      COMSOL:  k*dT  = dT0
 %Define g(x,t) and k
-physics.NEU.iwrite = gNEU ;
-physics.NEU.pi  = 1;
+phase.NEU.iwrite = gNEU ;
+phase.NEU.pi  = 1;
 %Define starting function
-physics.NEU.start.cutoff = 1;
-physics.NEU.start.t_initial = 0;
-physics.NEU.start.t_final = dt;
-physics.NEU.start.slope = abCFD_SlopeRamp( physics.NEU.start );
+phase.NEU.start.cutoff = 1;
+phase.NEU.start.t_initial = 0;
+phase.NEU.start.t_final = dt;
+phase.NEU.start.slope = abCFD_SlopeRamp( phase.NEU.start );
 
 % INSULATION (NEUMANN)
     %  abCFD:   dT(x,t) = 0                    COMSOL:  k*dT  = 0
@@ -55,16 +63,17 @@ physics.NEU.start.slope = abCFD_SlopeRamp( physics.NEU.start );
   
 %% DEFINE SPECIFIC FORCING TERM ---------------------------------------------- %
     %  abCFD:   Q                              COMSOL:  Q
-physics.Q = gF ;        % Constant in specific unit: [ [Q] /m^3 ]
+phase.Q = gF ;        % Constant in specific unit: [ [Q] /m^3 ]
 
 end
 
 % ---------------------------------------------------------------------------- %
 %   Author: MATTIA MONTANARI         mattia.montanari@eleves.ec-nantes.fr      % 
 % ---                                                                      --- %
-%   Version: 0.2                                 date:  MARCH 2013             % 
+%   Version: 0.3                                 date:   MAY  2013             % 
 % ---                                                                      --- %
 %   revision hystory:                                               -  date -  %
+%   0.3 - Inputs modified                                           02/05/2013 %
 %   0.2 - General revision, some comment added                      27/03/2013 %
 %   0.1 - kick-off                                                  27/02/2013 %
 % ---------------------------------------------------------------------------- %

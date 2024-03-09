@@ -5,7 +5,7 @@
 % /      \|__/ \__ |    |__/    CURRENT MATLAB's FOLDER                        %
 %                                                                              %
 % * * * CALLS * * *                                                            %
-%               i.abCFD_mdlobj_FEM                                            % 
+%               i.abCFD_mdlobj_FEM                                             % 
 %              ii.mphload                                                      %      
 %  <>    ><    <>    ><    <>    ><    <>    ><    <>    ><    <>    ><    <>  %
 %[ model, assemb ] = abCFD_WalkinComsol( ph, A_SaveLoad, ModelVersion )
@@ -25,22 +25,22 @@ function [ model, assemb ] = abCFD_WalkinComsol( ph, A_SaveLoad, ModelVersion )
 
     if strcmp( A_SaveLoad, 'S' ) == 1
         % RUN AND SAVE A NEW MODEL
-        [ model, assemb ] = abCFD_mdlobj_FEM( ph,ModelVersion  );
-        save('input_assemb.mat', 'assemb');
-        mphsave(model,['heat_mode14_',ModelVersion,'.mph'])
-        disp(['NEW MODEL SAVED IN: ',cd,'heat_mode14_',ModelVersion,'.mph']);
+        [ model, assemb ] = abCFD_mdlobj_FEM(  ph,ModelVersion, 'FEM');
+        save( [char(pwd),'/Database/input_assemb.mat'] , 'assemb')
+        mphsave(model,[char(pwd),'/Database/heat_mode14_',ModelVersion,'.mph'])
+        disp(['MODEL SAVED: ',char(pwd),'/Database/heat_mode14_',ModelVersion,'.mph']);
         
     elseif strcmp( A_SaveLoad, 'L' ) == 1
         
         % LOAD A OLD MODEL
         disp(['LOAD MODEL: ',cd,'heat_mode14_',ModelVersion,'.mph']);
-        [ model ] = mphload( ['heat_mode14_',ModelVersion,'.mph'] );    
-        load('input_assemb.mat', 'assemb');
+        [ model ] = mphload( [char(pwd),'/Database/heat_mode14_',ModelVersion,'.mph'] );    
+        load( [char(pwd),'/Database/input_assemb.mat'] , 'assemb') ;
         fprintf('Model loaded after %f sec. \n',toc)
     else
         
         % RUN A NEW MODEL
-        [ model, assemb ] = abCFD_mdlobj_FEM( ph,ModelVersion  );    
+        [ model, assemb ] = abCFD_mdlobj_FEM( ph,ModelVersion, 'FEM'  );    
         
     end
 
@@ -48,9 +48,10 @@ end
 % ---------------------------------------------------------------------------- %
 %   Author: MATTIA MONTANARI         mattia.montanari@eleves.ec-nantes.fr      % 
 % ---                                                                      --- %
-%   Version: 0.2                                 date:  MARCH 2013             % 
+%   Version: 0.3                                 date:  AUGUST 2013            % 
 % ---                                                                      --- %
 %   revision hystory:                                               -  date -  %
+%   0.3 - Added the directory 'Database' to the path                16/08/2013 %
 %   0.2 - General revision. Few comments added                      27/03/2013 %
 %   0.1 - kick-off                                                  27/02/2013 %
 % ---------------------------------------------------------------------------- %

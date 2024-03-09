@@ -7,14 +7,14 @@
 %  <>    ><    <>    ><    <>    ><    <>    ><    <>    ><    <>    ><    <>  %
 %abCFD_variables( model ) adds to the current model a set of variables
 
-function abCFD_variables( model )
+function abCFD_variables( model , ModelName )
 
 %% VARIABLES FOR BOUNDARY FLUX EVALUATIONS
 
 % On \Gamma1
 gamma = '1';
 IntVar = model.variable.create( ['var',gamma] );
-IntVar.model( 'mod1' );
+IntVar.model(  ModelName  );
 IntVar.set( [ 'ImprtTgamma',gamma] , ['InterpGamma',gamma,'(x,y)[1/K]'] );
 
 IntVar.active(false);
@@ -22,7 +22,7 @@ IntVar.active(false);
 % On \Gamma2
 gamma = '2';
 IntVar = model.variable.create( ['var',gamma] );
-IntVar.model( 'mod1' );
+IntVar.model(  ModelName  );
 IntVar.set( [ 'ImprtTgamma',gamma] , ['InterpGamma',gamma,'(x,y)[1/K]'] );
 
 IntVar.active(false);
@@ -30,7 +30,7 @@ IntVar.active(false);
 % On \Gamma3
 gamma = '3';
 IntVar = model.variable.create( ['var',gamma] );
-IntVar.model( 'mod1' );
+IntVar.model(  ModelName  );
 IntVar.set( [ 'ImprtTgamma',gamma] , ['InterpGamma',gamma,'(x,y)[1/K]'] );
 
 IntVar.active(false);
@@ -38,7 +38,7 @@ IntVar.active(false);
 % On \Gamma4
 gamma = '4';
 IntVar = model.variable.create( ['var',gamma] );
-IntVar.model( 'mod1' );
+IntVar.model(  ModelName  );
 IntVar.set( [ 'ImprtTgamma',gamma] , ['InterpGamma',gamma,'(x,y)[1/K]'] );
 
 IntVar.active(false);

@@ -12,7 +12,7 @@ function [ U ] = abCFD_getU( model, Solver, mesh )
 
 tiin = toc;
 %% Extract general information
-U.solinfo = mphsolinfo(model,'nu','on');
+U.solinfo = mphsolinfo(model,'solname', Solver ,'nu','on');
 last = U.solinfo.sizesolvals;
  
 %% EXTRACT UNKNOWN ARRAY
@@ -22,18 +22,18 @@ for id_t = 1 : last
 end
 
 %% ASSEMBLE SEPARATELY DEPENDENT VARIABLE FIELDS
-
-% Assemble temparture
-U.T.d1 =  U.d1( mesh{2}.ele{1}.dof{1}.uniqTAG , : );
-U.T.expr = 'T';
-% Assemble pressure
-U.p.d1 =  U.d1( mesh{2}.ele{1}.dof{2}.uniqTAG , : );
-U.p.expr = 'p';
-% Assemble velocity
-U.u.d1 =  U.d1( mesh{2}.ele{1}.dof{3}.uniqTAG , : );
-U.u.expr = 'T';
-U.v.d1 =  U.d1( mesh{2}.ele{1}.dof{4}.uniqTAG , : );
-U.v.expr = 'T';
+% 
+% % Assemble temparture
+% U.T.d1 =  U.d1( mesh{2}.ele{1}.dof{1}.uniqTAG , : );
+% U.T.expr = 'T';
+% % Assemble pressure
+% U.p.d1 =  U.d1( mesh{2}.ele{1}.dof{2}.uniqTAG , : );
+% U.p.expr = 'p';
+% % Assemble velocity
+% U.u.d1 =  U.d1( mesh{2}.ele{1}.dof{3}.uniqTAG , : );
+% U.u.expr = 'T';
+% U.v.d1 =  U.d1( mesh{2}.ele{1}.dof{4}.uniqTAG , : );
+% U.v.expr = 'T';
 
 fprintf('Solution extraction completed in %f sec \n', (toc-tiin) )
 

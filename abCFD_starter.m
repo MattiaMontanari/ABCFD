@@ -10,10 +10,10 @@
 
 function abCFD_starter 
  
-close all; 
+% close all; 
 colordef black; 
 clc; 
-addpath('imported');    
+addpath('Imported');    
 set(0,'DefaultFigureWindowStyle','docked') 
 
 clc;
@@ -34,9 +34,10 @@ end
 % ---------------------------------------------------------------------------- %
 %   Author: MATTIA MONTANARI         mattia.montanari@eleves.ec-nantes.fr      % 
 % ---                                                                      --- %
-%   Version: 0.2                                 date:  MARCH 2013             % 
+%   Version: 0.3                                 date:  AUGUST 2013            % 
 % ---                                                                      --- %
 %   revision hystory:                                               -  date -  %
+%   0.3 - Directory name change to 'Imported'                       16/08/2013 %
 %   0.2 - Added general initialization lines and general resion     27/03/2013 %
 %   0.1 - kick off                                                  01/03/2013 %
 % ---------------------------------------------------------------------------- %

@@ -4,9 +4,7 @@
 %  /----\ |  \|    |--  |   |   FUNCTION PROVIDED THE CUT-OFF VALUE, THE       %
 % /      \|__/ \__ |    |__/    INITIAL AND FINAL VALUES ON THE X-AXIS         %                     
 %  <>    ><    <>    ><    <>    ><    <>    ><    <>    ><    <>    ><    <>  %
-%[slope] = abCFD_SlopeRamp( inputstructure ) returns the slope of linear 
-% function which passes by the two points. The points are defined with the 
-% following coordinates:
+%[slope] = abCFD_SlopeRamp( inputstructure ) 
 %   1st point: [ 't_initial'    ,     0     ]
 %   2nd point: [ 't_final'      , 'cutOff'  ]
 % 
@@ -28,8 +26,9 @@ end
 % ---------------------------------------------------------------------------- %
 %   Author: MATTIA MONTANARI         mattia.montanari@eleves.ec-nantes.fr      % 
 % ---                                                                      --- %
-%   Version: 1.0                                 date:  MARCH 2013             % 
+%   Version: 2.0                                 date:   MAY  2013             % 
 % ---                                                                      --- %
 %   revision hystory:                                               -  date -  %
+%   2.0 - General revision                                          02/05/2013 %
 %   1.0 - kick off.                                                 27/02/2013 %
 % ---------------------------------------------------------------------------- %

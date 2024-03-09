@@ -27,20 +27,25 @@ function abCFD_plot_3DUinTime( model, mesh, var, i_mesh, i_ele, i_dof, data, Tim
 
 %% INITIALIZE
 % X-Y bounding for plot
-BoundingBox = model.geom('geom1').getBoundingBox;
+BoundingBox = model.geom('geomFEM').getBoundingBox;
 % Select which windows should be used
 if isempty( varargin )
     figure();
     FC_tag = gcf; close ( FC_tag ) 
+    figure( FC_tag )
+
+elseif ischar( varargin{1} )
+    
 else
     FC_tag = varargin{1};
+    figure( FC_tag )
+
 end
 
 % Check data input
 if isfield( data,'d1') ; data = data.d1; end
 
 % Initialize new plot
-figure( FC_tag )
 hold on
 view( 2)
 axis equal
@@ -77,7 +82,7 @@ if ndims ( data ) == 2                  %#ok<*ISMAT>
     %   P L O T   I N   T I M E
     if ~isscalar( TimeSteps )
         % Print info
-        fprintf( 'SCALAR PLOT INFO: \n Mesh type %s with %d DOFS \n', Type1,NumDof1)
+%         fprintf( 'SCALAR PLOT INFO: \n Mesh type %s with %d DOFS \n', Type1,NumDof1)
         % Plot at initial time
         ExtendedMesh = patch('faces', tri  ,'Vertices',[coord , Z(:,1)],...
             'FaceColor','interp','LineWidth',1,'EdgeColor','interp',...
@@ -87,7 +92,7 @@ if ndims ( data ) == 2                  %#ok<*ISMAT>
         for id_t = 1 : numel( TimeSteps ) 
             
             set( ExtendedMesh , 'Vertices', [ coord ,Z(:,id_t)],'CData', Z(:,id_t) );
-            pause( 0.001 ) % REQUIRED!
+            pause( 0.01 ) % REQUIRED!
             title( ['Variable ',Name1,' Solution at time = ' , num2str( TimeSteps(id_t))])
             
         end
@@ -139,7 +144,7 @@ elseif ndims ( data ) == 3
     %   P L O T   I N   T I M E
     if ~isscalar( TimeSteps )
         % Print info
-        fprintf( 'VECTORIAL PLOT INFO: \n Mesh type %s with %d DOFS \n', Type1,NumDof1)
+%         fprintf( 'VECTORIAL PLOT INFO: \n Mesh type %s with %d DOFS \n', Type1,NumDof1)
         % Plot at initial time
         ExtendedMesh = patch('faces', tri  ,'Vertices',[coord , Z(:,1)],...
             'FaceColor','interp','LineWidth',1,'EdgeColor','interp',...
@@ -149,7 +154,7 @@ elseif ndims ( data ) == 3
         for id_t = 1 : numel( TimeSteps ) 
             
             set( ExtendedMesh , 'Vertices', [ coord ,Z(:,id_t)],'CData', Z(:,id_t) );
-            pause( 0.001 )% REQUIRED!
+            pause( 0.01)% REQUIRED!
 title( ['Variables ',Name1,' && ',Name2,' Solution at time = ' , num2str( TimeSteps(id_t))])
             
         end
@@ -157,7 +162,7 @@ title( ['Variables ',Name1,' && ',Name2,' Solution at time = ' , num2str( TimeSt
     %   S I N G L E    P L O T    
     elseif isscalar( TimeSteps )
         % Print to screen info
-        fprintf( 'VECTORIAL PLOT INFO: \n Mesh type %s with %d DOFS \n', Type1,NumDof1)
+%         fprintf( 'VECTORIAL PLOT INFO: \n Mesh type %s with %d DOFS \n', Type1,NumDof1)
                 % Plot at single time
         patch('faces', tri  ,'Vertices',[coord , Z(:,TimeSteps)],...
             'FaceColor','interp','LineWidth',1,'EdgeColor','interp',...

@@ -8,7 +8,7 @@
 %  <>    ><    <>    ><    <>    ><    <>    ><    <>    ><    <>    ><    <>  %
 %abCFD_functions( model )
 
-function abCFD_functions( model  )
+function abCFD_functions( model, ModelName  )
 
 %% RAMP FUNCTIONS FOR BOUNDARY CONDITIONS
 
@@ -49,7 +49,7 @@ end
 
 % On \Gamma1
 IntFun = model.func.create('InterpGamma1', 'Interpolation');
-IntFun.model('mod1');
+IntFun.model( ModelName );
 IntFun.set('source', 'file');
 IntFun.set('filename', [pwd , '\myfile.txt'] );
 IntFun.setIndex('funcs', 'IntGamma1', 0, 0);
@@ -61,7 +61,7 @@ model.func('InterpGamma1').active(false);
 
 % On \Gamma2
 IntFun = model.func.create('InterpGamma2', 'Interpolation');
-IntFun.model('mod1');
+IntFun.model( ModelName );
 IntFun.set('source', 'file');
 IntFun.set('filename', [pwd , '\myfile.txt'] );
 IntFun.setIndex('funcs', 'IntGamma2', 0, 0);
@@ -73,7 +73,7 @@ model.func('InterpGamma2').active(false);
 
 % On \Gamma3
 IntFun = model.func.create('InterpGamma3', 'Interpolation');
-IntFun.model('mod1');
+IntFun.model( ModelName );
 IntFun.set('source', 'file');
 IntFun.set('filename', [pwd , '\myfile.txt'] );
 IntFun.setIndex('funcs', 'IntGamma3', 0, 0);
@@ -85,7 +85,7 @@ model.func('InterpGamma3').active(false);
 
 % On \Gamma4
 IntFun = model.func.create('InterpGamma4', 'Interpolation');
-IntFun.model('mod1');
+IntFun.model( ModelName );
 IntFun.set('source', 'file');
 IntFun.set('filename', [pwd , '\myfile.txt'] );
 IntFun.setIndex('funcs', 'IntGamma4', 0, 0);

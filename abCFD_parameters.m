@@ -10,17 +10,15 @@
 function abCFD_parameters( model, ph )
 
 % Load data
-load( 'geo.mat' );
+load( [char(pwd),'/Database/geo.mat'] );
 
 %% MATERIAL AND GEO PROPERTIES
 model.param.set('L', [num2str(L),'[m]'] );
 model.param.descr('L', 'Cylinder dyameter');
-% model.param.set('DeltaT',  [num2str(Tou-Tin),'[K]']);
-% model.param.descr('DeltaT', 'Inlet-Outlet Temperature gradient');
 model.param.set('Tmax', [num2str(ph.Tmax),'[K]']);
 model.param.descr('Tmax', 'Max INLET temperature');
-model.param.set('Tbul', [num2str(ph.Tbul),'[K]']);
-model.param.descr('Tbul', 'Refence/Bulk temperature at infinity (cold)');
+model.param.set('Tinit', [num2str(ph.Tinit),'[K]']);
+model.param.descr('Tinit', 'Refence/Bulk temperature at infinity (cold)');
 model.param.set('Tsur', [num2str(ph.Tsur),'[K]']);
 model.param.descr('Tsur', 'Max surface estimated temperature');
 model.param.set('rho', [num2str(ph.mat.rho),'[kg/m^3]']');
@@ -33,24 +31,6 @@ model.param.set('Cp', [num2str( ph.mat.Cp ),'[kJ/(kg*K)]']);
 model.param.descr('Cp', 'Heat capacity');
 model.param.set('beta', [num2str( ph.mat.thex ),'[1/K]']);
 model.param.descr('beta', 'Thermal expansion coefficient');
-% model.param.set('U0', 'sqrt(g_const*beta*DeltaT*L)');
-% model.param.descr('U0', 'Typical velocity due to buoyancy');
-% model.param.set('U1', 'U0/sqrt(Pr)');
-% model.param.descr('U1', 'Typical velocity estimation');
-% model.param.set('Pr', 'mud*Cp/k');
-% model.param.descr('Pr', 'Prandtl number');
-% model.param.set('Gr', '(U0*rho*L/mud)^2');
-% model.param.descr('Gr', 'Grashof number');
-% model.param.set('Ra', 'Pr*Gr');
-% model.param.descr('Ra', 'Rayleigh number');
-% model.param.set('Re0', 'rho*U0*L/mud');
-% model.param.descr('Re0', 'Reynolds number approximation with U0');
-% model.param.set('Re1', 'rho*U1*L/mud');
-% model.param.descr('Re1', 'Reynolds number approximation with U1');
-% model.param.set('eps_t', 'L/(Ra)^0.25');
-% model.param.descr('eps_t', 'Thermal boundary layer thickness');
-% model.param.set('eps_m', 'L/sqrt(Re1)');
-% model.param.descr('eps_m', 'Momentum boundary layer thickness');
 
 %% TIME STEP PARAMETER
 model.param.set('step_t', [num2str( ph.step_t ) , '[s]']) ;
@@ -58,7 +38,7 @@ model.param.descr('step_t', 'Time Step for phase 1');
 
 %% HEAT TRANSFER USEFUL PARAMETERS
 % INITIAL CONDITIONS
-model.param.set('initial_T', 'Tbul' ) ;
+model.param.set('initial_T', 'Tinit' ) ;
 model.param.descr('initial_T', 'Initial temperature');
 
 % BOUNDARY CONDITIONS' PARAMETERS
@@ -151,9 +131,11 @@ end
 % ---------------------------------------------------------------------------- %
 %   Author: MATTIA MONTANARI         mattia.montanari@eleves.ec-nantes.fr      % 
 % ---                                                                      --- %
-%   Version: 0.3                                 date:  April 2013             % 
+%   Version: 0.4                                 date:  August 2013            % 
 % ---                                                                      --- %
 %   revision hystory:                                               -  date -  %
+%   0.4 - Changed Tbul with Tinit for a more defined description    17/08/2013 %
+%       moreover the position of the geo.mat file has been changed             %
 %   0.3 - Changed reference .mat file: from 'input' to 'geo'        09/04/2013 %     
 %       The new file is better defined and contains information only on the    %
 %       geometry of the problem. BC's etc now is included into ph struct.      %

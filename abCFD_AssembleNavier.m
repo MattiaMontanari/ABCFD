@@ -1,19 +1,18 @@
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %%
 %    /\   |     __  ___  __                                                    %
-%   /  \  |__  /   |    |  \   	ASSEMBLE CONVECTIVE MATRIX GIVEN A SOLUTION    %
+%   /  \  |__  /   |    |  \   	ASSEMBLE x x x x x  MATRIX GIVEN A SOLUTION    %
 %  /----\ |  \|    |--  |   |   VECTOR. LINEAR TRIANGULAR ELEMENTS ONLY        %
 % /      \|__/ \__ |    |__/                                                   %
 %                                                                              %
 %  <>    ><    <>    ><    <>    ><    <>    ><    <>    ><    <>    ><    <>  %
-%[ C ] = abCFD_AssembleNavier( XY, TRI, SOL )
+%[ K, M] = abCFD_AssembleNavier( var, TRI, SOL )
 % INPUTS:
-%   - XY    : Dofs oordinates
+%   - var   : Usual structure
 %   - TRI   : Connectivity matrix for linear triangular elements
 %   - SOL   : Solution vector 'included' into the matrix
 % OUTPUT:
-%   - C     : Convective matrix
 
-function [ C , K, M] = abCFD_AssembleNavier( var, TRI, SOL, mesh)
+function [ K11, K12, K21, K22, M] = abCFD_AssembleNavier( var, TRI  )
 
 %% I N I T I A L I Z E
 % check coordinates
@@ -24,34 +23,38 @@ X = var.dofCoord( 1 , :)';
 Y = var.dofCoord( 2 , :)';
 
 IntPrecision = 2;                % Numerical integration order
-[ NumDof, NumVar ] = size( SOL );  % [ Number degrees of freedom , Numb. Variables ]
+NumDof = sum(var.fieldNDofs); 
 [ NumEle, ShpOrd ] = size( TRI );    % Number elements , number of dofs per element
 
 if ShpOrd == 3
 %% VELOCITY MATRICES
     % Initialize unkwon matrix
-    C = sparse( NumDof, NumDof);
-    K = sparse( NumDof, NumDof);
+    K11 = sparse( NumDof, NumDof);
+    K12 = sparse( NumDof, NumDof);
+    K21 = sparse( NumDof, NumDof);
+    K22 = sparse( NumDof, NumDof);
     M = sparse( NumDof, NumDof);
     % Get Gauss poits and weights
-    [ sGP , tGP, WGP ] = abCFD_GaussQuad2D( mesh{2}.Type , IntPrecision );
+    [ sGP , tGP, WGP ] = abCFD_GaussQuad2D( 'tri' , IntPrecision );
 
     % inner loop over elements  
     Xloc = zeros( NumEle, ShpOrd);
     Yloc = zeros( NumEle, ShpOrd);
-    Uloc = zeros( NumEle, ShpOrd);
-    Vloc = zeros( NumEle, ShpOrd);
+%     Uloc = zeros( NumEle, ShpOrd);
+%     Vloc = zeros( NumEle, ShpOrd);
     
     for i_el = 1 : ShpOrd
        Xloc( : , i_el ) = X( TRI( : ,  i_el) );
        Yloc( : , i_el ) = Y( TRI( : ,  i_el) );
-       Uloc( : , i_el ) = SOL( TRI( : ,  i_el) , 1);
-       Vloc( : , i_el ) = SOL( TRI( : ,  i_el) , 1);
+%        Uloc( : , i_el ) = SOL( TRI( : ,  i_el) , 1);
+%        Vloc( : , i_el ) = SOL( TRI( : ,  i_el) , 1);
     end
     
     % initialize local matrix
-    Cele = zeros( NumEle, 3,3);
-    Kele = zeros( NumEle, 3,3);
+    Kele11 = zeros( NumEle, 3,3);
+    Kele12 = zeros( NumEle, 3,3);
+    Kele21 = zeros( NumEle, 3,3);
+    Kele22 = zeros( NumEle, 3,3);
     Mele = zeros( NumEle, 3,3);
     % Loop over Gauss points
     for i_GP = 1 : numel( WGP )
@@ -95,23 +98,23 @@ if ShpOrd == 3
             dphidy(:,i_el) = (-dphids(:,i_el).*dxdt(:) + dphidt(:,i_el).*dxds(:));        
         end
         % Compute velocity derivatives
-        u_x = zeros( NumEle ,1); 
-        u_y = zeros( NumEle ,1);
-        for i_el = 1 : ShpOrd
-				u_x(:) = u_x(:) + Uloc(:, i_el ) .* phi(:, i_el );
-				u_y(:) = u_y(:) + Yloc(:, i_el ) .* phi(:, i_el );	 
-        end
+%         u_x = zeros( NumEle ,1); 
+%         u_y = zeros( NumEle ,1);
+%         for i_el = 1 : ShpOrd
+% 				u_x(:) = u_x(:) + Uloc(:, i_el ) .* phi(:, i_el );
+% 				u_y(:) = u_y(:) + Yloc(:, i_el ) .* phi(:, i_el );	 
+%         end
         
         % Assemble matrix
         for j = 1 : ShpOrd
             for i = 1 : ShpOrd              
-					Cele(:,i,j)  = Cele(:,i,j)  + WGP(i_GP) * u_x(:).*phi(:,i).*dphidx(:,j) + ... 
-                                                + WGP(i_GP) * u_y(:).*phi(:,i).*dphidy(:,j);
+                                            
+                    Kele11(:,i,j)  = Kele11(:,i,j)  + WGP(i_GP) * dphidx(:,i).*dphidx(:,j).*invjac(:) ;
+                    Kele12(:,i,j)  = Kele12(:,i,j)  + WGP(i_GP) * dphidy(:,i).*dphidx(:,j).*invjac(:) ;
+                    Kele21(:,i,j)  = Kele21(:,i,j)  + WGP(i_GP) * dphidx(:,i).*dphidy(:,j).*invjac(:) ;
+                    Kele22(:,i,j)  = Kele22(:,i,j)  + WGP(i_GP) * dphidy(:,i).*dphidy(:,j).*invjac(:) ;
                     
-                    Kele(:,i,j)  = Kele(:,i,j)  + WGP(i_GP) * dphidy(:,i).*dphidy(:,j).*invjac(:)/2 ;
-                    Kele(:,i,j)  = Kele(:,i,j)  + WGP(i_GP) * dphidx(:,i).*dphidx(:,j).*invjac(:)/2 ;
-                    
-                    Mele(:,i,j)  = Mele(:,i,j)  + WGP(i_GP) * phi(:,i).*phi(:,j).*jac(:)/2 ;
+                    Mele(:,i,j)  = Mele(:,i,j)  + WGP(i_GP) * phi(:,i).*phi(:,j).*jac(:) ;
             end
         end        
     end
@@ -121,8 +124,10 @@ if ShpOrd == 3
         nrow = TRI(:,krow);	 
           for kcol = 1 : 3
               ncol = TRI(:,kcol);	  
-              C = C + sparse( nrow , ncol , Cele(:,krow,kcol) , NumDof , NumDof);
-              K = K + sparse( nrow , ncol , Kele(:,krow,kcol) , NumDof , NumDof);
+              K11 = K11 + sparse( nrow , ncol , Kele11(:,krow,kcol) , NumDof , NumDof);
+              K12 = K12 + sparse( nrow , ncol , Kele12(:,krow,kcol) , NumDof , NumDof);
+              K21 = K21 + sparse( nrow , ncol , Kele21(:,krow,kcol) , NumDof , NumDof);
+              K22 = K22 + sparse( nrow , ncol , Kele22(:,krow,kcol) , NumDof , NumDof);
               M = M + sparse( nrow , ncol , Mele(:,krow,kcol) , NumDof , NumDof);
           end
     end

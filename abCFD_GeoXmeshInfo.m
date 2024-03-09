@@ -37,22 +37,37 @@ tiin = toc;
 
 %% Initialize 
 
+% Find the structure field in 'model' which contains 'Stationary'
 SolvTag = cell( model.sol.tags );
-UsefulSolTag = 1;
-SolvTag = SolvTag{ UsefulSolTag };
-MeshTag = char( model.mesh.tags );
-%(CHECK IF xmiStudy and xmiVarV1 are equal in this case)
-grid = model.mesh( MeshTag );
+GetType = []; id = 0;
+while strcmp( GetType, 'Stationary') == 0
+    id = id + 1;
+    GetType =  model.sol( SolvTag{ id }).getType;
+end
+SolvTag = SolvTag{ id };
 solver = model.sol( SolvTag );
+
+% Mesh tag
+MeshTag = char( model.mesh.tags );
+grid = model.mesh( MeshTag );
 % xmiStudy = solver.feature('st1').xmeshInfo();
-xmiVarV1 = solver.feature('v1').xmeshInfo(); 
+
+% Find the structure field in 'solver' which contains 'Variables'
+FeatureTags = cell( solver.feature.tags );
+GetType = []; id = 0;
+while strcmp( GetType, 'Variables') == 0
+    id = id + 1;
+    GetType =  solver.feature( FeatureTags{ id }).getType;
+end
+UsefulVarTag = FeatureTags{ id };
+xmiVarV1 = solver.feature( UsefulVarTag ).xmeshInfo(); 
 
 %% EXTRACT ALL DATA FROM xmiVarV1
 
 % All variables names
 var.fieldNames = cell( xmiVarV1.fieldNames);
 % All number dofs
-var.fieldNDofs = xmiVarV1.fieldNDofs;
+var.fieldNDofs = double( xmiVarV1.fieldNDofs );
 % All element types
 var.meshTypes = cell( xmiVarV1.meshTypes );
 
@@ -80,8 +95,8 @@ var.nodeCoord = double( xmiVarV1.nodes().coords() );
 % Loop over single variable
 for id_dof = 1 :numel( var.DofsNames )
     % Make the names DOFS' and NODEs' names usable in matlab
-    var.DofsNames{id_dof}(1,5) = '_';
-    var.NodesNames{id_dof}(1,5) = '_';
+    var.DofsNames{id_dof}(1,4) = '_';
+    var.NodesNames{id_dof}(1,4) = '_';
 end
 
 %% CONSTRUCT MESH OUTPUT STRUCTURE
@@ -109,7 +124,7 @@ for t = 1 : numel( var.meshTypes ) % eg: i = 1 : 3 ['edg',tri',vtx']
     mesh{ t }.localDofNames = ...
         cell( xmiVarV1().elements( mesh{ t }.Type ).localDofNames );   
     for id_dof = 1 :numel( mesh{ t }.localDofNames )
-        mesh{ t }.localDofNames{id_dof}(1,5) = '_';
+        mesh{ t }.localDofNames{id_dof}(1,4) = '_';
     end
     % Local coordinates on edge
     mesh{ t }.localDofCoords = ...
@@ -154,9 +169,8 @@ fprintf('Xmesh data extracted in %f minutes \n', (toc-tiin)/60 )
 
 
 %% CLEAN MEMORY
-
-model.sol( SolvTag ).feature('st1').clearXmesh();
-model.sol( SolvTag ).feature('v1').clearXmesh();
+ 
+model.sol( SolvTag ).feature( UsefulVarTag ).clearXmesh();
 
 %           ======================== 
 %% -------  USE MPHMESHSTATS COMMAND  ------------------------- ref. LLMatLab
@@ -180,9 +194,11 @@ end
 % ---------------------------------------------------------------------------- %
 %   Author: MATTIA MONTANARI         mattia.montanari@eleves.ec-nantes.fr      % 
 % ---                                                                      --- %
-%   Version: 0.7                                 date:  APRIL 2013             % 
+%   Version: 0.8                                 date:   MAY  2013             % 
 % ---                                                                      --- %
 %   revision hystory:                                               -  date -  %
+%   0.8 - Generalized initialization section. It identifies solver  05/05/2013 %
+%       and variables                                                          %
 %   0.7 - deleted field .elementsDOFS                               15/04/2013 %
 %   0.6 - Properly restablished the field uniqTag                   06/04/2013 %
 %   0.5 - Restablished the field uniqTag                            05/04/2013 %

@@ -10,11 +10,14 @@
 %       - A is the matrix to be rounded
 
 function A = abCFD_round( A, varargin )
-
-if numel( varargin ) == 0
-    tol = 1e-8;
-else
+ 
+if numel( varargin ) ~= 0
     tol = varargin{ 1 };
+elseif min(min( A ) ) ~= 0
+    tol = abs( min(min( A ) ) ) * 1e-8;
+else 
+    tol = 1e-8; 
+    
 end
 A = A./tol;
 A = round(A);
